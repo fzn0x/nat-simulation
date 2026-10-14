@@ -56,12 +56,14 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// The server only ever looks at the source IP. It has no idea whether
+	// a router rewrote it on the way.
 	src := packet.Host(p.Src)
 	if !s.allowed[src] {
-		log.Printf("DENY  %s  (%s is not on the allow-list)", p, src)
+		log.Printf("DENY  %-20s not on the allow-list, replying Not Permitted", p.Src)
 		packet.Write(w, http.StatusForbidden, p.Reply("Not Permitted"))
 		return
 	}
-	log.Printf("ALLOW %s", p)
+	log.Printf("ALLOW %-20s on the allow-list, replying Hello!", p.Src)
 	packet.Write(w, http.StatusOK, p.Reply("Hello!"))
 }
