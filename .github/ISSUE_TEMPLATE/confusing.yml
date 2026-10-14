@@ -1,6 +1,6 @@
 name: Something is confusing
 description: You followed the README or the code and got lost. That counts as a bug here.
-labels: [docs]
+labels: [documentation]
 body:
   - type: textarea
     id: where
