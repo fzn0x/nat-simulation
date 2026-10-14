@@ -1,10 +1,10 @@
 ![nat-simulation: see how a router hides its clients behind its own address. Three small Go programs, no root, no real firewall.](assets/banner.svg)
 
 <p align="center">
-  <a href="https://github.com/fzn0x/nat-simulation/actions/workflows/ci.yml"><img alt="CI status" src="https://img.shields.io/github/actions/workflow/status/fzn0x/nat-simulation/ci.yml?branch=main&style=flat-square&label=ci&labelColor=111111&color=AEE1FF"></a>
-  <a href="go.mod"><img alt="Go 1.21 or newer" src="https://img.shields.io/badge/go-1.21%2B-AEE1FF?style=flat-square&labelColor=111111"></a>
-  <a href="go.mod"><img alt="No dependencies" src="https://img.shields.io/badge/dependencies-none-AEE1FF?style=flat-square&labelColor=111111"></a>
-  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-AEE1FF?style=flat-square&labelColor=111111"></a>
+  <a href="https://github.com/fzn0x/nat-simulation/actions/workflows/ci.yml"><img alt="CI status" src="https://img.shields.io/github/actions/workflow/status/fzn0x/nat-simulation/ci.yml?branch=main&style=flat-square&label=ci&labelColor=3B5566&color=AEE1FF"></a>
+  <a href="go.mod"><img alt="Go 1.21 or newer" src="https://img.shields.io/badge/go-1.21%2B-AEE1FF?style=flat-square&labelColor=3B5566"></a>
+  <a href="go.mod"><img alt="No dependencies" src="https://img.shields.io/badge/dependencies-none-AEE1FF?style=flat-square&labelColor=3B5566"></a>
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-AEE1FF?style=flat-square&labelColor=3B5566"></a>
 </p>
 
 **nat-simulation** acts out what `iptables -t nat -A POSTROUTING -j MASQUERADE` does on a Linux router, with three small Go programs standing in for the kernel. A client sends the same request twice: once through a router that masquerades it, and once straight to a server that only trusts the router. One gets `Hello!`, the other gets `Not Permitted`, and the router's log shows exactly what it rewrote to make the difference.
@@ -18,9 +18,9 @@ It's a toy for learning. Nothing touches your real firewall, nothing needs root,
 Every 4 seconds the client prints a round like this:
 
 ```text
-[client] 17:50:38 round 1: 192.168.1.10:49152 -> 203.0.113.80:80
-[client] 17:50:38   via router  200 Hello!         reply to 192.168.1.10:49152
-[client] 17:50:38   direct      403 Not Permitted  reply to 192.168.1.10:49152
+[client] 18:08:25 round 1: 192.168.1.10:49152 -> 203.0.113.80:80
+[client] 18:08:25   via router  200 Hello!         reply to 192.168.1.10:49152
+[client] 18:08:25   direct      403 Not Permitted  reply to 192.168.1.10:49152
 ```
 
 Same client, same request, same reply address. The only difference is the path, and the only thing the router changed on the way is the **source address**. Notice that the client can't tell: both replies come back addressed to `192.168.1.10`. Hiding that change from the client is what masquerading means.
@@ -53,7 +53,10 @@ Each launcher calls `go run`, so the first start takes a moment to compile. Pass
 
 All three programs really talk to each other over HTTP on `127.0.0.1`, so the operating system would report the same address for everyone. The "network" addresses therefore travel inside each request as a small JSON packet, where the router can rewrite them the way a real router rewrites an IP header.
 
-![Step 1: the client builds a packet with source 192.168.1.10:49152 (red brick), hardware address 02:42:c0:a8:01:0a (white tile) and destination 203.0.113.80:80 (yellow brick).](assets/step-1.svg)
+<picture>
+  <source media="(max-width: 600px)" srcset="assets/step-1-narrow.svg">
+  <img src="assets/step-1.svg" width="100%" alt="Step 1: the client builds a packet with source 192.168.1.10:49152 (red brick), hardware address 02:42:c0:a8:01:0a (white tile) and destination 203.0.113.80:80 (yellow brick).">
+</picture>
 
 **1. The client sends a request.** Its source is its own private address. It also carries the client's hardware (MAC-style) address, which the router will use as a filing key.
 
@@ -61,32 +64,41 @@ All three programs really talk to each other over HTTP on `127.0.0.1`, so the op
 {"src": "192.168.1.10:49152", "dst": "203.0.113.80:80", "hwaddr": "02:42:c0:a8:01:0a", "body": "hello"}
 ```
 
-![Step 2: the router lifts the red source brick off, files 192.168.1.10:49152 in its translation table under hardware address 02:42:c0:a8:01:0a, and drops its own blue brick, 203.0.113.1:49152, into the source seat.](assets/step-2.svg)
+<picture>
+  <source media="(max-width: 600px)" srcset="assets/step-2-narrow.svg">
+  <img src="assets/step-2.svg" width="100%" alt="Step 2: the router lifts the red source brick off, files 192.168.1.10:49152 in its translation table under hardware address 02:42:c0:a8:01:0a, and drops its own blue brick, 203.0.113.1:49152, into the source seat.">
+</picture>
 
 **2. The router swaps in its own address.** It writes down where the packet really came from, keyed by hardware address, then replaces the source with its public address. The port stays the same. This is the masquerade, and it takes three lines of [`router/main.go`](router/main.go).
 
 ```text
-[router] 17:50:38 OUT  src=192.168.1.10:49152    dst=203.0.113.80:80       hw=02:42:c0:a8:01:0a body="hello"
-[router] 17:50:38      recorded 02:42:c0:a8:01:0a -> 192.168.1.10:49152
-[router] 17:50:38      rewrote src 192.168.1.10:49152 -> 203.0.113.1:49152
+[router] 18:08:25 OUT  src=192.168.1.10:49152    dst=203.0.113.80:80       hw=02:42:c0:a8:01:0a body="hello"
+[router] 18:08:25      recorded 02:42:c0:a8:01:0a -> 192.168.1.10:49152
+[router] 18:08:25      rewrote src 192.168.1.10:49152 -> 203.0.113.1:49152
 ```
 
-![Step 3: the server's allow-list holds only 203.0.113.1. The routed packet with the blue source gets 200 Hello!; the direct packet with the red source 192.168.1.10 gets 403 Not Permitted.](assets/step-3.svg)
+<picture>
+  <source media="(max-width: 600px)" srcset="assets/step-3-narrow.svg">
+  <img src="assets/step-3.svg" width="100%" alt="Step 3: the server's allow-list holds only 203.0.113.1. The routed packet with the blue source gets 200 Hello!; the direct packet with the red source 192.168.1.10 gets 403 Not Permitted.">
+</picture>
 
 **3. The server checks the allow-list.** It only reads the source address and compares it with its list, which by default holds just the router. The routed copy passes. The direct copy, still wearing the client's private address, is turned away.
 
 ```text
-[server] 17:50:38 ALLOW src=203.0.113.1:49152     dst=203.0.113.80:80       hw=02:42:c0:a8:01:0a body="hello"
-[server] 17:50:38 DENY  src=192.168.1.10:49152    dst=203.0.113.80:80       hw=02:42:c0:a8:01:0a body="hello"  (192.168.1.10 is not on the allow-list)
+[server] 18:08:25 ALLOW 203.0.113.1:49152    on the allow-list, replying Hello!
+[server] 18:08:25 DENY  192.168.1.10:49152   not on the allow-list, replying Not Permitted
 ```
 
-![Step 4: the reply arrives addressed to the router. The router looks up 02:42:c0:a8:01:0a, finds 192.168.1.10:49152, lifts its blue brick off the destination seat and drops the client's red brick back in.](assets/step-4.svg)
+<picture>
+  <source media="(max-width: 600px)" srcset="assets/step-4-narrow.svg">
+  <img src="assets/step-4.svg" width="100%" alt="Step 4: the reply arrives addressed to the router. The router looks up 02:42:c0:a8:01:0a, finds 192.168.1.10:49152, lifts its blue brick off the destination seat and drops the client's red brick back in.">
+</picture>
 
 **4. The router restores the reply.** The server answered the router's address, so the router looks up the hardware address carried in the reply, puts the client's real address back as the destination, and hands the reply over.
 
 ```text
-[router] 17:50:38 IN   src=203.0.113.80:80       dst=203.0.113.1:49152     hw=02:42:c0:a8:01:0a body="Hello!"
-[router] 17:50:38      restored dst 203.0.113.1:49152 -> 192.168.1.10:49152
+[router] 18:08:25 IN   src=203.0.113.80:80       dst=203.0.113.1:49152     hw=02:42:c0:a8:01:0a body="Hello!"
+[router] 18:08:25      restored dst 203.0.113.1:49152 -> 192.168.1.10:49152
 ```
 
 ### Peek at the translation table
