@@ -1,0 +1,17 @@
+name: Experiment or improvement
+description: Suggest a way to make NAT easier to see or understand.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you add or change?
+    validations:
+      required: true
+  - type: textarea
+    id: lesson
+    attributes:
+      label: What would a learner understand afterwards?
+      description: Every change is judged by whether it makes the masquerade easier to see. See CONTRIBUTING.md.
+    validations:
+      required: true

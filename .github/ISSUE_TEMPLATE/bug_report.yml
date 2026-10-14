@@ -1,0 +1,35 @@
+name: Bug report
+description: A program crashed, printed something wrong, or didn't behave like the README says.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did you see instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How can we reproduce it?
+      description: The exact commands you ran in each terminal, including any flags.
+      placeholder: |
+        Terminal 1: ./server/serverexec
+        Terminal 2: ./router/routerexec
+        Terminal 3: ./client/clientexec -rounds 1
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: Paste the server, router and client output. It is formatted as code automatically.
+      render: text
+  - type: input
+    id: env
+    attributes:
+      label: Go version and OS
+      placeholder: go1.21.6 windows/amd64
+    validations:
+      required: true

@@ -1,0 +1,16 @@
+name: Something is confusing
+description: You followed the README or the code and got lost. That counts as a bug here.
+labels: [docs]
+body:
+  - type: textarea
+    id: where
+    attributes:
+      label: Where did you get lost?
+      description: A README section, a log line, a function. Links or quotes help.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you think would happen?
+      description: Your mental model is the most useful part of this report.
