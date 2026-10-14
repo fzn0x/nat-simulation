@@ -84,7 +84,7 @@ The logo and README plates in [`assets/`](assets) follow a brick build-instructi
 | Colour                          | Means                              |
 | ------------------------------- | ---------------------------------- |
 | Brick red `#E53935`             | A client's private address         |
-| Accent blue `#147BD1`           | The router's public address        |
+| Accent blue `#1E84DA`           | The router's public address        |
 | Build yellow `#FFCD00`          | The server                         |
 | Plate grey `#D9D9D9`            | The packet and its payload         |
 | Sky blue `#AEE1FF`              | The page                           |
