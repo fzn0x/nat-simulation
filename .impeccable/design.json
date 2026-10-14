@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-14T18:15:00Z",
+  "title": "Design System: nat-simulation",
+  "extensions": {
+    "colorMeta": {
+      "sky-page": { "role": "neutral", "displayName": "Instruction Sky", "canonical": "#AEE1FF", "tonalRamp": ["#0B2A3D", "#174A68", "#2B6D93", "#4E93BC", "#86CBF3", "#AEE1FF", "#D2EEFF", "#EEF8FF"] },
+      "sky-grid": { "role": "neutral", "displayName": "Grid Sky", "canonical": "#86CBF3", "tonalRamp": ["#0B2A3D", "#174A68", "#2B6D93", "#4E93BC", "#86CBF3", "#AEE1FF", "#D2EEFF", "#EEF8FF"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#111111", "tonalRamp": ["#111111", "#2A2A2A", "#444444", "#5C5C5C", "#808080", "#A2A2A2", "#C9C9C9", "#F2F2F2"] },
+      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#FFFFFF", "tonalRamp": ["#5C5C5C", "#808080", "#A2A2A2", "#BEBEBE", "#C9C9C9", "#E4E4E4", "#F2F2F2", "#FFFFFF"] },
+      "slate-muted": { "role": "neutral", "displayName": "Muted Slate", "canonical": "#3B5566", "tonalRamp": ["#121D24", "#24435A", "#3B5566", "#557083", "#738DA0", "#96AEBE", "#BCCFDC", "#E3EDF3"] },
+      "slate-subline": { "role": "neutral", "displayName": "Subline Slate", "canonical": "#24435A", "tonalRamp": ["#121D24", "#24435A", "#3B5566", "#557083", "#738DA0", "#96AEBE", "#BCCFDC", "#E3EDF3"] },
+      "brick-red": { "role": "primary", "displayName": "Brick Red (client private address)", "canonical": "#E53935", "tonalRamp": ["#5E120F", "#7E1916", "#9F201D", "#C42B28", "#E53935", "#EB6561", "#F29C99", "#FAD3D2"] },
+      "router-blue": { "role": "primary", "displayName": "Router Blue (router public address)", "canonical": "#1E84DA", "tonalRamp": ["#082E52", "#0B3E6E", "#0E4F8A", "#1468B2", "#1E84DA", "#509FE2", "#8DC1EE", "#CDE5F8"] },
+      "build-yellow": { "role": "secondary", "displayName": "Build Yellow (server)", "canonical": "#FFCD00", "tonalRamp": ["#6E5300", "#967100", "#BF9100", "#E3B000", "#FFCD00", "#FFD838", "#FFE680", "#FFF5CC"] },
+      "plate-grey": { "role": "tertiary", "displayName": "Plate Grey (packet and payload)", "canonical": "#D9D9D9", "tonalRamp": ["#5C5C5C", "#7F7F7F", "#A2A2A2", "#BEBEBE", "#D9D9D9", "#E1E1E1", "#EDEDED", "#F7F7F7"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display (Archivo 900, wdth 100)", "purpose": "The nat-simulation wordmark on the banner only. Outlined to paths." },
+      "numeral": { "displayName": "Numeral (Archivo 900, wdth 62)", "purpose": "Step numerals at 150 units and the 1x counts in call-outs." },
+      "headline": { "displayName": "Headline (Archivo 800)", "purpose": "Plate titles: 40 units on wide plates, 36 on narrow ones, at most two lines." },
+      "label": { "displayName": "Label (Archivo 700, caps, +0.08em)", "purpose": "Call-out box titles above a 3px ink rule." },
+      "body": { "displayName": "Body (Archivo 600)", "purpose": "The banner tagline." },
+      "data": { "displayName": "Data (Martian Mono 500, wdth 87.5)", "purpose": "Addresses, ports and hardware addresses. Monospace is used for data only." },
+      "data-strong": { "displayName": "Data Strong (Martian Mono 700, wdth 87.5)", "purpose": "Verdict chips and table column headers." }
+    },
+    "shadows": [],
+    "motion": [],
+    "breakpoints": [
+      { "name": "narrow-plate", "value": "600px", "purpose": "At max-width 600px, <picture> serves the 720-wide step-N-narrow.svg variant." }
+    ],
+    "geometry": {
+      "projection": "isometric 30deg",
+      "studPitch": 1,
+      "gridCell": "32 units",
+      "brickHeight": 1.2,
+      "plateHeight": 0.4,
+      "studRadius": 0.3,
+      "studHeight": 0.24,
+      "studTopLighten": "22%",
+      "packet": "5x2 grey plate carrying a 2x2 src brick, a 1x2 white hw tile and a 2x2 dst brick",
+      "widePlate": { "size": "1200x600", "assembly": "x 40-640", "calloutColumn": "x 676, 476 wide" },
+      "narrowPlate": { "width": 720, "callouts": "stacked below the assembly" }
+    },
+    "states": [
+      { "name": "seated", "mark": "normal rendering" },
+      { "name": "arriving", "mark": "hovers above a dashed ink seat, with a solid ink arrow (paper halo) pointing down" },
+      { "name": "lifted-off", "mark": "ghosted at opacity .4 with dashed edges" },
+      { "name": "rejected", "mark": "a solid ink bar stops the arrow, followed by a ✕ verdict chip" },
+      { "name": "accepted", "mark": "the arrow reaches the box, followed by a ✓ verdict chip" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Call-out Box",
+      "kind": "card",
+      "refersTo": "callout-box",
+      "description": "Signature 1:1 box showing exactly the one part a step changes: a brick, a 1x count and a mono address.",
+      "html": "<div class=\"ds-callout\"><div class=\"ds-callout-title\">PIECES IN THIS SET</div><div class=\"ds-callout-row\"><svg class=\"ds-brick\" viewBox=\"0 0 60 50\" aria-hidden=\"true\"><path d=\"M30 4 L56 19 L30 34 L4 19 Z\" fill=\"#1E84DA\" stroke=\"#082E52\" stroke-width=\"1.4\" stroke-linejoin=\"round\"/><path d=\"M4 19 L30 34 L30 48 L4 33 Z\" fill=\"#1468B2\" stroke=\"#082E52\" stroke-width=\"1.4\" stroke-linejoin=\"round\"/><path d=\"M56 19 L30 34 L30 48 L56 33 Z\" fill=\"#0E4F8A\" stroke=\"#082E52\" stroke-width=\"1.4\" stroke-linejoin=\"round\"/><ellipse cx=\"30\" cy=\"17\" rx=\"7\" ry=\"4\" fill=\"#509FE2\" stroke=\"#082E52\" stroke-width=\"1.4\"/></svg><span class=\"ds-count\">1x</span><span class=\"ds-mono\">203.0.113.1</span></div></div>",
+      "css": ".ds-callout { background: #FFFFFF; border: 4px solid #111111; border-radius: 14px; padding: 16px 20px; color: #111111; max-width: 476px; } .ds-callout-title { font-family: Archivo, sans-serif; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 15px; padding-bottom: 8px; border-bottom: 3px solid #111111; margin-bottom: 12px; } .ds-callout-row { display: flex; align-items: center; gap: 14px; } .ds-brick { width: 60px; height: 50px; } .ds-count { font-family: Archivo, sans-serif; font-weight: 900; font-stretch: 62%; font-size: 36px; line-height: 1; } .ds-mono { font-family: 'Martian Mono', monospace; font-stretch: 87.5%; font-weight: 500; font-size: 16px; }"
+    },
+    {
+      "name": "Translation Table Call-out",
+      "kind": "card",
+      "refersTo": "callout-box",
+      "description": "Table variant of the call-out: HWADDR against INSIDE ADDRESS, with slate column headers.",
+      "html": "<div class=\"ds-table-callout\"><div class=\"ds-table-title\">TRANSLATION TABLE</div><table><thead><tr><th>HWADDR</th><th>INSIDE ADDRESS</th></tr></thead><tbody><tr><td>02:42:c0:a8:01:0a</td><td>192.168.1.10:49152</td></tr></tbody></table></div>",
+      "css": ".ds-table-callout { background: #FFFFFF; border: 4px solid #111111; border-radius: 14px; padding: 16px 20px; color: #111111; max-width: 476px; } .ds-table-title { font-family: Archivo, sans-serif; font-weight: 700; letter-spacing: 0.08em; font-size: 15px; padding-bottom: 8px; border-bottom: 3px solid #111111; margin-bottom: 10px; } .ds-table-callout table { border-collapse: collapse; width: 100%; font-family: 'Martian Mono', monospace; font-stretch: 87.5%; } .ds-table-callout th { color: #3B5566; font-weight: 700; font-size: 11px; text-align: left; padding: 4px 8px 4px 0; } .ds-table-callout td { font-weight: 500; font-size: 14px; padding: 4px 8px 4px 0; }"
+    },
+    {
+      "name": "Label Chip",
+      "kind": "chip",
+      "refersTo": "label-chip",
+      "description": "Mono address label tied to a part by a 3px ink leader ending in a white-haloed ink dot.",
+      "html": "<span class=\"ds-chip\">src 192.168.1.10</span>",
+      "css": ".ds-chip { display: inline-block; background: #FFFFFF; color: #111111; border: 3px solid #111111; border-radius: 8px; padding: 6px 12px; font-family: 'Martian Mono', monospace; font-stretch: 87.5%; font-weight: 500; font-size: 15px; }"
+    },
+    {
+      "name": "Verdict Chip (accepted)",
+      "kind": "chip",
+      "refersTo": "verdict-chip",
+      "description": "Shown where an arrow reaches its box. Leads with a drawn check mark.",
+      "html": "<span class=\"ds-verdict\"><svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M2 8.5 L6 12.5 L14 3.5\" fill=\"none\" stroke=\"#111111\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>200 Hello!</span>",
+      "css": ".ds-verdict { display: inline-flex; align-items: center; gap: 8px; background: #FFFFFF; color: #111111; border: 3px solid #111111; border-radius: 8px; padding: 6px 12px; font-family: 'Martian Mono', monospace; font-stretch: 87.5%; font-weight: 700; font-size: 15px; } .ds-verdict svg { width: 16px; height: 16px; }"
+    },
+    {
+      "name": "Verdict Chip (rejected)",
+      "kind": "chip",
+      "refersTo": "verdict-chip",
+      "description": "Shown after a solid ink bar stops the arrow. Leads with a drawn cross mark.",
+      "html": "<span class=\"ds-verdict-x\"><svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M3 3 L13 13 M13 3 L3 13\" fill=\"none\" stroke=\"#111111\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg>403 Not Permitted</span>",
+      "css": ".ds-verdict-x { display: inline-flex; align-items: center; gap: 8px; background: #FFFFFF; color: #111111; border: 3px solid #111111; border-radius: 8px; padding: 6px 12px; font-family: 'Martian Mono', monospace; font-stretch: 87.5%; font-weight: 700; font-size: 15px; } .ds-verdict-x svg { width: 16px; height: 16px; }"
+    },
+    {
+      "name": "Page Plate",
+      "kind": "custom",
+      "refersTo": "page-plate",
+      "description": "Sky page with a dashed stud grid, a 4px ink keyline and radius 26. Carries the numeral, the title, the assembly and the call-out column.",
+      "html": "<div class=\"ds-plate\"><span class=\"ds-numeral\">2</span><span class=\"ds-plate-title\">The router swaps in its own address</span></div>",
+      "css": ".ds-plate { display: flex; align-items: center; gap: 20px; background-color: #AEE1FF; background-image: linear-gradient(to right, rgba(134,203,243,.75) 1px, transparent 1px), linear-gradient(to bottom, rgba(134,203,243,.75) 1px, transparent 1px); background-size: 32px 32px; border: 4px solid #111111; border-radius: 26px; padding: 24px 40px; color: #111111; } .ds-numeral { font-family: Archivo, sans-serif; font-weight: 900; font-stretch: 62%; font-size: 150px; line-height: 1; } .ds-plate-title { font-family: Archivo, sans-serif; font-weight: 800; font-size: 40px; line-height: 1.1; }"
+    },
+    {
+      "name": "Logo Tile",
+      "kind": "custom",
+      "refersTo": "logo-tile",
+      "description": "A paper tile with an ink keyline: a blue router brick standing in front of the red client brick it hides.",
+      "html": "<svg class=\"ds-logo\" viewBox=\"0 0 256 256\" role=\"img\" aria-label=\"nat-simulation logo\"><rect x=\"8\" y=\"8\" width=\"240\" height=\"240\" rx=\"52\" fill=\"#FFFFFF\" stroke=\"#111111\" stroke-width=\"14\"/><path d=\"M144 57 L203 91 L144 125 L85 91 Z\" fill=\"#E53935\" stroke=\"#5E120F\" stroke-width=\"1.7\"/><path d=\"M85 91 L144 125 L144 166 L85 132 Z\" fill=\"#C42B28\" stroke=\"#5E120F\" stroke-width=\"1.7\"/><path d=\"M203 91 L144 125 L144 166 L203 132 Z\" fill=\"#9F201D\" stroke=\"#5E120F\" stroke-width=\"1.7\"/><path d=\"M112 100 L171 134 L112 168 L53 134 Z\" fill=\"#1E84DA\" stroke=\"#082E52\" stroke-width=\"1.7\"/><path d=\"M53 134 L112 168 L112 209 L53 175 Z\" fill=\"#1468B2\" stroke=\"#082E52\" stroke-width=\"1.7\"/><path d=\"M171 134 L112 168 L112 209 L171 175 Z\" fill=\"#0E4F8A\" stroke=\"#082E52\" stroke-width=\"1.7\"/></svg>",
+      "css": ".ds-logo { width: 96px; height: 96px; display: block; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Build-Instruction Booklet",
+    "overview": "Every visual in nat-simulation reads like a page from a toy brick instruction booklet. Each NAT translation is one numbered assembly step. The part that changes arrives bright, with an arrow pointing to its seat. Parts that leave are ghosted. A paper-white 1:1 call-out box shows exactly the one part the step changes. The page is instruction-sky blue with a faint stud grid. Every line is an ink keyline, and the lettering is heavy and grotesk.\n\nThe world lives entirely in static SVG plates, because GitHub markdown allows no page CSS. All text is outlined to paths so it renders the same everywhere. Each plate repeats its meaning in nearby markdown and alt text. The picture is never the only place the information lives, and colour is never the only signal: every brick also carries a written address label.\n\nThe system deliberately avoids the networking-tool default of a dark terminal banner, a monospace wordmark and an ASCII topology. Monospace appears only where data appears.",
+    "keyCharacteristics": [
+      "Bricks with fixed jobs: red is the client's private address, blue is the router's public address, yellow is the server, grey is the packet and its payload.",
+      "Isometric bricks at 30°, flat-shaded in three tones plus a dark edge, with no gradients.",
+      "State is shown with marks, not hues: seated, arriving, ghosted, rejected, accepted.",
+      "Ink keylines everywhere; paper call-outs on a sky page.",
+      "Huge condensed step numerals. Reading order follows the arrows.",
+      "Static by design. There is no motion."
+    ],
+    "rules": [
+      { "name": "The Fixed Jobs Rule", "body": "A brick colour is a meaning, not a decoration. Red is only ever a client's private address. Blue is only ever the router's public address. Yellow is only ever the server. Grey is only ever the packet and its payload. A new plate may not reuse any of them for emphasis.", "section": "colors" },
+      { "name": "The Blue Is Spoken For Rule", "body": "Arrows, links in plates, highlights and selection marks are never blue, because blue already means the router. Arrows are ink.", "section": "colors" },
+      { "name": "The Label Always Rides Rule", "body": "Every brick has a written address label in a mono chip or call-out. Colour alone never carries meaning.", "section": "colors" },
+      { "name": "The Mono Means Data Rule", "body": "Martian Mono appears only on literal values a program would print: addresses, ports, hardware addresses, status lines and table headers. Titles, counts and the wordmark are never mono.", "section": "typography" },
+      { "name": "The Outlined Text Rule", "body": "SVG text is always converted to paths, because an SVG loaded through <img> cannot load fonts.", "section": "typography" },
+      { "name": "The Three Faces Rule", "body": "A solid has exactly a top, a left face and a right face, each a flat fill from its brick's tone set and outlined in the edge tone. A light source is never implied by gradient or shadow.", "section": "elevation" },
+      { "name": "The Halo, Not Shadow Rule", "body": "When an ink mark crosses a brick, it is separated with a paper halo (4px on arrows, a white ring on leader dots), never with a shadow.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do give every changing part its own numbered step, a call-out box with \"1x\", and a mono address label.",
+      "Do build every solid from its four-tone brick set (top, left, right, edge) plus the stud tone.",
+      "Do show state with marks (seat, arrow, ghost, stop bar, ✓/✕ chip), keeping each brick its job colour in every state.",
+      "Do ship a 720-wide narrow variant of every step plate and serve it through <picture> at max-width: 600px.",
+      "Do outline all SVG text, and keep each plate's alt text and the README text beside it in sync."
+    ],
+    "donts": [
+      "Don't use red, blue, yellow or grey for anything other than their fixed jobs.",
+      "Don't draw arrows, highlights or links in blue; blue is reserved for the router.",
+      "Don't add gradients, drop shadows or blur to bricks or boxes; depth comes from the three flat faces.",
+      "Don't set titles, counts or the wordmark in monospace; Martian Mono is for data only.",
+      "Don't let colour be the only signal; every brick carries a written label."
+    ]
+  }
+}
