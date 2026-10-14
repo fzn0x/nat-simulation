@@ -10,15 +10,24 @@ permissions:
 
 jobs:
   test:
+    name: test (${{ matrix.os }}, go ${{ matrix.go }})
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          # The oldest Go that go.mod promises to support.
+          - { os: ubuntu-latest, go: "1.21.x" }
+          # Go 1.21 binaries no longer start on current macOS runners,
+          # so the other platforms test on the latest stable release.
+          - { os: ubuntu-latest, go: stable }
+          - { os: windows-latest, go: stable }
+          - { os: macos-latest, go: stable }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: go.mod
+          go-version: ${{ matrix.go }}
       - name: gofmt
         if: runner.os == 'Linux'
         run: test -z "$(gofmt -l .)" || (gofmt -l . && exit 1)
