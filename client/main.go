@@ -8,9 +8,11 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"time"
 
 	"github.com/fzn0x/nat-simulation/internal/packet"
@@ -32,10 +34,10 @@ func main() {
 	log.Printf("%s (hw %s) talking to %s every %s", *addr, *hw, *dst, *every)
 
 	paths := []struct {
-		name, url string
+		name, peer, url string
 	}{
-		{"via router", *routerURL},
-		{"direct    ", *serverURL},
+		{"via router", "router", *routerURL},
+		{"direct    ", "server", *serverURL},
 	}
 
 	// Each round is a new conversation, so it gets a new source port, the
@@ -52,7 +54,7 @@ func main() {
 		for _, path := range paths {
 			reply, status, err := packet.Send(path.url, req)
 			if err != nil {
-				log.Printf("  %s  error: %v", path.name, err)
+				log.Printf("  %s  error: %s", path.name, explain(err, path.peer, path.url))
 				continue
 			}
 			log.Printf("  %s  %d %-14s reply to %s", path.name, status, reply.Body, reply.Dst)
@@ -66,4 +68,13 @@ func main() {
 			time.Sleep(*every)
 		}
 	}
+}
+
+// explain turns a connection failure into a hint about which program to start.
+func explain(err error, peer, url string) string {
+	var op *net.OpError
+	if errors.As(err, &op) && op.Op == "dial" {
+		return fmt.Sprintf("can't reach the %s at %s (is %sexec running?)", peer, url, peer)
+	}
+	return err.Error()
 }
