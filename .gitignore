@@ -1,0 +1,18 @@
+# Go build output
+/bin/
+*.exe
+*.test
+*.out
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Design tooling scratch (screenshots, downloaded references)
+.impeccable/review/
+.impeccable/quality-bar/
+.impeccable/mocks/
+.impeccable/live/
+.impeccable/config.local.json
